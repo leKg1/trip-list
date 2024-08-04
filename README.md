@@ -9,8 +9,8 @@ This is a React application that displays a list of trips, utilizing a mock API 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/username/repository-name.git
-cd your-repository-name
+git clone https://github.com/leKg1/trip-list.git
+cd trip-list
 ```
 
 2. Install dependencies:
