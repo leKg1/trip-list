@@ -1,16 +1,16 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { RootState, AppDispatch } from "../store";
+import { RootState } from "../store";
 import { useAppDispatch } from "../store/useAppDispatch";
 import {
-  fetchTrips,
   incrementDisplayedTrips,
   setDisplayedTrips,
+  fetchTripsRequest,
 } from "../store/tripsSlice";
 import TripCard from "./TripCard";
 
 const TripList: React.FC = () => {
-  const dispatch: AppDispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
   const { trips, displayedTrips, totalTrips, loading, error } = useSelector(
     (state: RootState) => state.trips
   );
@@ -18,7 +18,7 @@ const TripList: React.FC = () => {
   useEffect(() => {
     if (displayedTrips === 0) {
       dispatch(setDisplayedTrips(30));
-      dispatch(fetchTrips({ start: 0, limit: 30 }));
+      dispatch(fetchTripsRequest({ start: 0, limit: 30 }));
     }
   }, [dispatch, displayedTrips]);
 
@@ -29,7 +29,7 @@ const TripList: React.FC = () => {
     ) {
       if (displayedTrips < totalTrips && !loading) {
         dispatch(incrementDisplayedTrips(10));
-        dispatch(fetchTrips({ start: displayedTrips, limit: 10 }));
+        dispatch(fetchTripsRequest({ start: displayedTrips, limit: 10 }));
       }
     }
   };

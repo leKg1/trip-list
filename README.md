@@ -2,7 +2,7 @@
 
 =====================
 
-This is a React application that displays a list of trips, utilizing a mock API for data fetching. The application supports infinite scrolling and is built using Webpack with SCSS for styling.
+This is a React, Typescript, RTK, Redux-saga application that displays a list of trips, utilizing a mock API for data fetching. The application supports infinite scrolling and is built using Webpack with SCSS for styling.
 
 ### Installation
 

@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Trip, TripsState } from "./types";
 
 const initialState: TripsState = {
@@ -9,61 +9,49 @@ const initialState: TripsState = {
   error: null,
 };
 
-//------Async thunk to fetch trips------
-export const fetchTrips = createAsyncThunk<
-  Trip[],
-  { start: number; limit: number },
-  { rejectValue: string }
->("trips/fetchTrips", async ({ start, limit }, thunkAPI) => {
-  try {
-    const response = await fetch(
-      `http://localhost:4000/trips?_start=${start}&_limit=${limit}`
-    );
-    if (!response.ok) {
-      return thunkAPI.rejectWithValue("Failed to fetch trips");
-    }
-    return (await response.json()) as Trip[];
-  } catch (error) {
-    return thunkAPI.rejectWithValue("Failed to fetch trips");
-  }
-});
-
 const tripsSlice = createSlice({
   name: "trips",
   initialState,
   reducers: {
-    incrementDisplayedTrips(state, action) {
+    incrementDisplayedTrips(state, action: PayloadAction<number>) {
       state.displayedTrips = Math.min(
         state.displayedTrips + action.payload,
         state.totalTrips
       );
     },
-    setDisplayedTrips(state, action) {
+    setDisplayedTrips(state, action: PayloadAction<number>) {
       state.displayedTrips = action.payload;
     },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchTrips.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchTrips.fulfilled, (state, action) => {
-        state.trips = [...state.trips, ...action.payload];
-        state.loading = false;
+    fetchTripsPending(state) {
+      state.loading = true;
+      state.error = null;
+    },
+    fetchTripsFulfilled(state, action: PayloadAction<Trip[]>) {
+      state.trips = [...state.trips, ...action.payload];
+      state.loading = false;
 
-        //------If all trips have been fetched, notify the user------
-        if (state.trips.length >= state.totalTrips) {
-          alert("поездок больше не найдено");
-        }
-      })
-      .addCase(fetchTrips.rejected, (state, action) => {
-        state.error = action.payload as string;
-        state.loading = false;
-      });
+      if (state.trips.length >= state.totalTrips) {
+        alert("поездок больше не найдено");
+      }
+    },
+    fetchTripsRejected(state, action: PayloadAction<string>) {
+      state.error = action.payload;
+      state.loading = false;
+    },
+    fetchTripsRequest: (
+      state,
+      action: PayloadAction<{ start: number; limit: number }>
+    ) => {},
   },
 });
 
-export const { incrementDisplayedTrips, setDisplayedTrips } =
-  tripsSlice.actions;
+export const {
+  incrementDisplayedTrips,
+  setDisplayedTrips,
+  fetchTripsPending,
+  fetchTripsFulfilled,
+  fetchTripsRejected,
+  fetchTripsRequest,
+} = tripsSlice.actions;
+
 export default tripsSlice.reducer;
